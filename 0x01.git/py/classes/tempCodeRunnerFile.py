@@ -1,1 +1,4 @@
-assert  == cube.surface_area()
+import unittest
+
+
+unittest.main(argv=[""], verbosity=2, exit=False)
