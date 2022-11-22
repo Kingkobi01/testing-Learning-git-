@@ -11,13 +11,20 @@ class SMS_store:
         return len(self.messages)
 
     def get_unread_indexes(self):
-        return [message.index() for message in self.messages if message[0] == False]
+        return [
+            self.messages.index(message)
+            for message in self.messages
+            if message[0] == False
+        ]
 
     def get_message(self, i):
         if len(self.messages) > i:
             selected_message = self.messages[i]
-            selected_message[0] = True
-            return selected_message
+            list_selected_message = list(selected_message)
+            list_selected_message[0] = True
+            modified_message = tuple(list_selected_message)
+            self.messages[i] = modified_message
+            return modified_message
         else:
             return None
 
@@ -25,7 +32,7 @@ class SMS_store:
         try:
             selected_message = self.messages[i]
             self.messages.remove(selected_message)
-        except len(self.messages <= i):
+        except len(self.messages) <= i:
             print(f"There is not any message with an index of {i}")
 
     def clear(self):
@@ -35,9 +42,18 @@ class SMS_store:
 my_inbox = SMS_store()
 
 my_inbox.add_new_arrival("0231456789", "11:45pm", "Killer, ma memfiili wo")
-my_inbox.message_count()
-my_inbox.get_unread_indexes()
-my_inbox.get_message(0)
+my_inbox.add_new_arrival("0124356489", "08:451m", "Hey, killer wadware?")
+
+
+assert len(my_inbox.get_unread_indexes()) == 2
+
+assert my_inbox.get_message(0)
+
+assert len(my_inbox.get_unread_indexes()) == 1
+
+my_inbox.clear()
+
+assert my_inbox.message_count() == 0
 
 
 ## Please try your hands with the testings
