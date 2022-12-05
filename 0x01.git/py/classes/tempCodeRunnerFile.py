@@ -1,4 +1,6 @@
-import unittest
-
-
-unittest.main(argv=[""], verbosity=2, exit=False)
+def __repr__(self):
+      description = ""
+      for country in self.catalogue:
+        description += f"{str(country)}\n"
+      
+      return description

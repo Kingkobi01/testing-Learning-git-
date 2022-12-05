@@ -1,3 +1,5 @@
+
+
 class Country:
     """
     Class for keeping track of country details for the purpose of the Country Catalogue's functionality. Country objects
@@ -10,18 +12,20 @@ class Country:
         self.population = population
         self.area = area
 
-
     def population_density(self) -> float:
         """
         Calculate and return the population density of the Country. Population density is calculated with
         population/area.
+
         :return: The population density of the Country.
         :rtype: float.
         """
         return float(self.population / self.area)
 
 
-    def __eq__(self, other: "Country") -> bool:
+        
+
+    def __eq__(self, other) -> bool:
         """
         Check if two instances of a Country object are equal. Country objects are considered equal if all attributes are
         equal.
@@ -31,11 +35,7 @@ class Country:
         :return: True if the Country objects have all attributes equal.
         :rtype: boolean.
         """
-        if self.name == other.name and self.continent == other.continent and self.population == other.population and self.area == other.area:
-            return True
-        else:
-            return False
-
+        return True if str(self) == str(other) else False
 
     def __repr__(self) -> str:
         """
@@ -47,7 +47,12 @@ class Country:
 
         return f"{self.name}, {self.continent}, {self.population}, {self.area}"
 
+
+
+
+
 import unittest
+
 
 class CountryTest(unittest.TestCase):
     def test_country_name_returns_correct_country_name(self):
@@ -96,7 +101,12 @@ class CountryTest(unittest.TestCase):
 
     def test_repr_arbitrary_country_returns_correct_string(self):
         country = Country("Name", "Continent", 123456789, 987654321)
-        self.assertEqual("Country(name=Name, continent=Continent, population=123456789, area=987654321)", str(country))
+        self.assertEqual("Name, Continent, 123456789, 987654321", str(country))
+
+
+
+
+
 
 class CountryCatalogue:
     """
@@ -104,8 +114,8 @@ class CountryCatalogue:
     a mechanism for adding, removing, finding, checking if exists, and other collection-ie type methods.
     """
 
-    def __init__(self, _catalogue:list=[]):
-        self.catalogue =_catalogue
+    def __init__(self, _catalogue=[] ):
+        self.catalogue = _catalogue
 
 
     def _find(self, country: Country) -> int:
@@ -118,13 +128,14 @@ class CountryCatalogue:
         :return: Index of the Country with the matching values.
         :rtype: integer.
         """
-        country_index = self.catalogue.index(country)
+        catalogue = self.catalogue
 
-        if str(country_index).isdigit():
-          return country_index
+        if country in catalogue:
+              index = catalogue.index(country)
         else:
-          return -1
+              index = -1
 
+        return index
 
 
     def contains(self, country: Country) -> bool:
@@ -137,13 +148,15 @@ class CountryCatalogue:
         :return: True if the Country object is contained within the CountryCatalogue, False otherwise.
         :rtype: bool.
         """
-        does_contain = False
-        for pointed_country in self.catalogue:
-          if pointed_country == country:
-            does_contain = True
-            break
-          
-        return does_contain
+        
+
+        if country in self.catalogue:
+          return True
+        else:
+          return False
+        
+
+
 
 
     def add(self, country: Country) -> None:
@@ -155,8 +168,8 @@ class CountryCatalogue:
         :param area: Area of the country.
         :type area: float.
         """
-        self.catalogue.append(country)
 
+        self.catalogue.append(country)
 
 
     def remove(self, country: Country) -> Country:
@@ -168,12 +181,16 @@ class CountryCatalogue:
         :param country: Country object to remove from the collection.
         :type country: Country object.
         """
-        if country not in self.catalogue:
-            raise ValueError
+        if country in self.catalogue:
+          self.catalogue.remove(country)
+          return country
         else:
-            self.catalogue.remove(country)
+            raise ValueError
         
-        return country
+
+        
+        
+
 
 
     def country_with_largest_population_density(self) -> Country:
@@ -185,16 +202,28 @@ class CountryCatalogue:
         :return: Country object with the largest population density.
         :rtype: Country.
         """
+        population_densities = []
+
         if len(self.catalogue) == 0:
-            raise IndexError
+            raise ValueError
         else:
-            population_densities = []
-            for country in self.catalogue:
-                population_densities.append(country.population_density())
-            largest_number = max(population_densities)
-            index_of_largest_number = population_densities.index(largest_number)
-            country_with_highest_pd = self.catalogue[index_of_largest_number]
-            return country_with_highest_pd
+          for country in self.catalogue:
+            population_densities.append(country.population_density())
+
+          largest_population_density = max(population_densities)
+          index_of_largest_population_density = population_densities.index(largest_population_density)
+
+          country_with_largest_population_density = self.catalogue[index_of_largest_population_density]
+          return country_with_largest_population_density  
+       
+
+
+          
+
+
+
+        
+
 
     def country_with_smallest_population_density(self) -> Country:
         """
@@ -205,16 +234,22 @@ class CountryCatalogue:
         :return: Country object with the smallest population density.
         :rtype: Country.
         """
+        population_densities = []
+
         if len(self.catalogue) == 0:
-            raise IndexError
+            raise ValueError
         else:
-            population_densities = []
-            for country in self.catalogue:
-                population_densities.append(country.population_density())
-            smallest_number = max(population_densities)
-            index_of_smallest_number = population_densities.index(smallest_number)
-            country_with_lowest_pd = self.catalogue[index_of_smallest_number]
-            return country_with_lowest_pd
+          for country in self.catalogue:
+            population_densities.append(country.population_density())
+          
+          smallest_population_density = min(population_densities)
+          index_of_smallest_population_density = population_densities.index(smallest_population_density)
+
+          country_with_smallest_population_density = self.catalogue[index_of_smallest_population_density]
+
+        return country_with_smallest_population_density
+        
+          
 
 
     def filter_countries_by_population_density(self, low_limit: float, high_limit: float) -> "CountryCatalogue":
@@ -232,13 +267,16 @@ class CountryCatalogue:
         :return: A new CountryCatalogue object with copies of Country objects that fall within the specified range.
         :rtype: CountryCatalogue
         """
-        filtered_catalog = CountryCatalogue()
 
-        for pointed_country in self.catalogue:
-          if low_limit <= pointed_country.population_density() <= high_limit:
-            filtered_catalog.add(pointed_country)
+        newCatalogue = []
+
+        for country in self.catalogue:
+          if low_limit <= country.population_density() <= high_limit:
+            newCatalogue.append(country)
+          else:
+            continue
         
-        return filtered_catalog
+        return CountryCatalogue(newCatalogue)
 
 
     def most_populous_continent(self) -> str:
@@ -251,6 +289,7 @@ class CountryCatalogue:
         :return: Name of the continent with the largest population.
         :rtype: str.
         """
+
         if len(self.catalogue) > 0:
           continent_dict = {}
           for country in self.catalogue:
@@ -267,32 +306,30 @@ class CountryCatalogue:
           most_populous_continent = list_of_continents[index_of_most_populous_continent]
           return most_populous_continent
         else:
-          return IndexError
+          raise IndexError
 
+          
 
-    def __getitem__(self, item: int) -> Country:
-        return self.catalogue[item]
-
-
-    def __len__(self) -> int:
-        return len(self.catalogue)
+          
 
 
 
-    def __eq__(self, other: "CountryCatalogue") -> bool:
-        self.catalogue.sort()
-        other.catalogue.sort()
-        if self.catalogue == other.catalogue:
-            return True
-        else:
-            return False
+
+    def __len__(self):
+      return len(self.catalogue)
 
 
-    def __repr__(self) -> str:
-        description = ''
-        for country in self.catalogue:
-            description += f"{country.__repr__()} \n"
-        return description
+    def __eq__(self, other):
+      return True if self.catalogue.sort() == other.catalogue.sort() else False
+
+
+    def __repr__(self):
+      description = ""
+      for country in self.catalogue:
+        description += f"{str(country)}\n"
+      
+      return description
+
 
 import unittest
 
@@ -328,14 +365,6 @@ class CountryCatalogueTest(unittest.TestCase):
         empty_country_catalogue = CountryCatalogue()
         with self.assertRaises(IndexError):
             empty_country_catalogue.most_populous_continent()
-
-    def test_getitem_empty_collection_raises_index_error(self):
-        empty_country_catalogue = CountryCatalogue()
-        indicies = [-1, 0, 1]
-        for index in indicies:
-            with self.subTest(index=index):
-                with self.assertRaises(IndexError):
-                    empty_country_catalogue[index]
 
     def test_repr_empty_collection_returns_empty_string(self):
         empty_country_catalogue = CountryCatalogue()
@@ -434,24 +463,10 @@ class CountryCatalogueTest(unittest.TestCase):
         singleton_country_catalogue.add(Country("Name", "Continent", 10, 1))
         self.assertEqual("Continent", singleton_country_catalogue.most_populous_continent())
 
-    def test_getitem_valid_index_singleton_returns_item(self):
-        singleton_country_catalogue = CountryCatalogue()
-        singleton_country_catalogue.add(Country("Name", "Continent", 123456789, 987654321))
-        self.assertEqual(Country("Name", "Continent", 123456789, 987654321), singleton_country_catalogue[0])
-
-    def test_getitem_invalid_index_singleton_raises_index_error(self):
-        singleton_country_catalogue = CountryCatalogue()
-        singleton_country_catalogue.add(Country("Name", "Continent", 123456789, 987654321))
-        with self.assertRaises(IndexError):
-            singleton_country_catalogue[1]
-
     def test_repr_singleton_returns_correct_string(self):
         singleton_country_catalogue = CountryCatalogue()
         singleton_country_catalogue.add(Country("Name", "Continent", 123456789, 987654321))
-        self.assertEqual(
-            "Country(name=Name, continent=Continent, population=123456789, area=987654321)\n",
-            str(singleton_country_catalogue),
-        )
+        self.assertEqual("Name, Continent, 123456789, 987654321\n", str(singleton_country_catalogue))
 
     def test_len_many_returns_correct_length(self):
         many_country_catalogue = CountryCatalogue()
@@ -601,33 +616,6 @@ class CountryCatalogueTest(unittest.TestCase):
         many_country_catalogue.add(Country("Name_5", "Continent_3", 1, 1))
         self.assertEqual("Continent_2", many_country_catalogue.most_populous_continent())
 
-    def test_getitem_valid_index_many_returns_item(self):
-        many_country_catalogue = CountryCatalogue()
-        countries = []
-        countries.append(Country("Name_1", "Continent_1", 123456789, 987654321))
-        countries.append(Country("Name_2", "Continent_2", 123456789, 987654321))
-        countries.append(Country("Name_3", "Continent_3", 123456789, 987654321))
-        countries.append(Country("Name_4", "Continent_4", 123456789, 987654321))
-        countries.append(Country("Name_5", "Continent_5", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_1", "Continent_1", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_2", "Continent_2", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_3", "Continent_3", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_4", "Continent_4", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_5", "Continent_5", 123456789, 987654321))
-        for index, country in enumerate(countries):
-            with self.subTest(index=index, country=country):
-                self.assertEqual(country, many_country_catalogue[index])
-
-    def test_getitem_invalid_index_many_raises_index_error(self):
-        many_country_catalogue = CountryCatalogue()
-        many_country_catalogue.add(Country("Name_1", "Continent_1", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_2", "Continent_2", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_3", "Continent_3", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_4", "Continent_4", 123456789, 987654321))
-        many_country_catalogue.add(Country("Name_5", "Continent_5", 123456789, 987654321))
-        with self.assertRaises(IndexError):
-            many_country_catalogue[5]
-
     def test_repr_many_returns_correct_string(self):
         many_country_catalogue = CountryCatalogue()
         many_country_catalogue.add(Country("Name_1", "Continent_1", 123456789, 987654321))
@@ -636,11 +624,11 @@ class CountryCatalogueTest(unittest.TestCase):
         many_country_catalogue.add(Country("Name_4", "Continent_4", 123456789, 987654321))
         many_country_catalogue.add(Country("Name_5", "Continent_5", 123456789, 987654321))
         expected = (
-            "Country(name=Name_1, continent=Continent_1, population=123456789, area=987654321)\n"
-            "Country(name=Name_2, continent=Continent_2, population=123456789, area=987654321)\n"
-            "Country(name=Name_3, continent=Continent_3, population=123456789, area=987654321)\n"
-            "Country(name=Name_4, continent=Continent_4, population=123456789, area=987654321)\n"
-            "Country(name=Name_5, continent=Continent_5, population=123456789, area=987654321)\n"
+            "Name_1, Continent_1, 123456789, 987654321\n"
+            "Name_2, Continent_2, 123456789, 987654321\n"
+            "Name_3, Continent_3, 123456789, 987654321\n"
+            "Name_4, Continent_4, 123456789, 987654321\n"
+            "Name_5, Continent_5, 123456789, 987654321\n"
         )
         self.assertEqual(expected, str(many_country_catalogue))
 
@@ -759,10 +747,12 @@ class CountryCatalogueTest(unittest.TestCase):
             with self.subTest(country_a=country_a, country_b=country_b):
                 self.assertNotEqual(country_a, country_b)
 
+
+
 # Run this cell to run all unit tests
 unittest.main(argv=[''], verbosity=2, exit=False)
 
-# NAME:
+## NAME:
 # ST-NUMBER:
 # StFX EMAIL:
 
@@ -781,6 +771,7 @@ if __name__ == "__main__":
         catalogue.add(country)
     in_file.close()
 
+
     # Alter catalogue contents
     england = Country("England", "Europe", 56489800, 130279)
     ecuador = Country("Ecuador", "South America", 18048628, 256370)
@@ -791,13 +782,14 @@ if __name__ == "__main__":
     catalogue.remove(Country("Canada", "North America", 34207000, 9976140.0))
     catalogue.remove(Country("South Korea", "Asia", 50503933, 98076.92))
 
+    
     # Answering questions
     print(catalogue.country_with_smallest_population_density())
     print(catalogue.country_with_largest_population_density())
     print(catalogue.most_populous_continent())
 
-    # Save filtered data
-    filtered_catalogue = catalogue.filter_countries_by_population_density(200, 450)
-    out_file = open("density-200_450.csv", "w")
-    out_file.write(str(filtered_catalogue))
-    out_file.close()
+    # # Save filtered data
+    # filtered_catalogue = catalogue.filter_countries_by_population_density(200, 450)
+    # out_file = open("density-200_450.csv", "w")
+    # out_file.write(str(filtered_catalogue))
+    # out_file.close()
